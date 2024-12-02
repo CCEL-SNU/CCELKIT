@@ -33,7 +33,7 @@ def main():
 
     if args.command == 'visual':
         if hasattr(args, 'visual_command') and args.visual_command == 'create_config':
-            create_config(args.output)
+            create_config()
         else:
             visual(args=args)
     else:
