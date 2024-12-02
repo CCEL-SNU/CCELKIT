@@ -15,7 +15,7 @@ def create_config():
         "input_filepath": "./src/perovskite_POSCAR",
         "output_filepath": "./outputs/config_perovskite_POSCAR.png",
         "repeatation": [1, 1, 1],
-        "orientation": "0.945420 -0.016442 -0.325439 0.293091 0.479364, 0.827229 0.142402 -0.877462 0.458019",
+        "orientation": "0.945420 -0.016442 -0.325439 0.293091 0.479364 0.827229 0.142402 -0.877462 0.458019",
         "cell_on": True,
         "transmittances": None,
         "heatmaps": None,
