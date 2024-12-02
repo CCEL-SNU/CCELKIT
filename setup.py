@@ -11,6 +11,11 @@ setup(
         "pyyaml",
         "numpy",
     ],
+    entry_points={
+        'console_scripts': [
+            'ccelkit=ccelkit.cli:main',
+        ],
+    },
     python_requires=">=3.6",
     author="CCEL",
     author_email="snupark@snu.ac.kr",
