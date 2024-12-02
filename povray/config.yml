@@ -1,0 +1,18 @@
+input_filepath: "./src/perovskite_POSCAR" # file path of the atoms
+output_filepath: "./outputs/config_perovskite_POSCAR.png" # file path of the output image
+repeatation: [1, 1, 1] # repeatation of the atoms
+orientation: [+0.955480,+0.294974,-0.006949,-0.042581,+0.161156,+0.986010,+0.291967,-0.941817,+0.166542] # camera orientation
+cell_on: true # whether to visualize the cell
+transmittances: null # transmittances of the atoms, length should be the same as the number of atoms 
+heatmaps: null # heatmaps of the atoms, length should be the same as the number of atoms
+canvas_width: 800 # width of the canvas
+color_species: # color of the atoms by species
+  "Re": [0.580, 0, 0.827]
+  'H': [0.529, 0.808, 0.980]
+  "O": [0.0, 0.0, 1.0]
+  "Ru": [0.827, 0.827, 0.827]
+color_index: # color of the atoms by index
+  0: [0.580, 0, 0.827]
+  1: [0.529, 0.808, 0.980]
+  2: [1.000, 0.051, 0.051]
+  3: [0.0, 0.0, 1.0]
