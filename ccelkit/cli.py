@@ -5,7 +5,7 @@ from ase.io import read, write
 from PIL import Image
 import numpy as np
 from scipy.spatial.transform import Rotation as R
-from ccelkit.povray import visual
+from .povray import visual
 
 def main():
     parser = ArgumentParser(description="Function commands")
@@ -30,7 +30,7 @@ def main():
         visual(args=args)
     else:
         parser.print_help()
-        
+
 if __name__ == "__main__":
     main()
 
