@@ -9,7 +9,7 @@ from scipy.spatial.transform import Rotation as R
 import os
 import yaml
 
-def create_config(output):
+def create_config():
     default_config = {
         "target": None,
         "input_filepath": "./src/perovskite_POSCAR",
@@ -35,7 +35,7 @@ def create_config(output):
     }
     
     # YAML 파일로 저장
-    with open(output, 'w', encoding='utf-8') as f:
+    with open("./config.yml", 'w', encoding='utf-8') as f:
         yaml.dump(default_config, f, allow_unicode=True, default_flow_style=False)
 
 def parse_orientation(orientation: str) -> List[float]:
