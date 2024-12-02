@@ -6,9 +6,6 @@ import numpy as np
 from ase.data.colors import jmol_colors
 
 from scipy.spatial.transform import Rotation as R
-
-
-import click
 import os
 import yaml
 
@@ -40,8 +37,6 @@ def create_config(output):
     # YAML 파일로 저장
     with open(output, 'w', encoding='utf-8') as f:
         yaml.dump(default_config, f, allow_unicode=True, default_flow_style=False)
-    
-    click.echo(f"설정 파일이 생성되었습니다: {output}")
 
 def parse_orientation(orientation: str) -> List[float]:
     orientation_preset = {

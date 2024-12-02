@@ -13,7 +13,7 @@ from ._povray_utils import parse_orientation
 from ._povray_utils import create_config
 import yaml
 from typing import List,Dict
-import click
+
 def to_povray_image(input_filepath: str
                     , output_filepath: str
                     , repeatation: List[int]
@@ -60,7 +60,6 @@ def to_povray_image(input_filepath: str
     os.remove("./temp.png")
     return None
     
-@click.group()
 def visual(args):
     if args.config:
         with open(args.config, 'r') as f:
@@ -120,5 +119,3 @@ def visual(args):
     for input_filepath, output_filepath in zip(files_to_be_processed, files_to_be_saved):
         print(f"{input_filepath} -> {output_filepath}")
         to_povray_image(input_filepath, output_filepath, repeatation, orientation, cell_on, transmittances, heatmaps, canvas_width, color_species, color_index)
-
-visual.add_command(create_config)
