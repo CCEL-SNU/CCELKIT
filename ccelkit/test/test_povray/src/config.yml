@@ -1,7 +1,11 @@
+"target": null
 input_filepath: "./src/perovskite_POSCAR" # file path of the atoms
 output_filepath: "./outputs/config_perovskite_POSCAR.png" # file path of the output image
 repeatation: [1, 1, 1] # repeatation of the atoms
-orientation: [+0.955480,+0.294974,-0.006949,-0.042581,+0.161156,+0.986010,+0.291967,-0.941817,+0.166542] # camera orientation
+orientation: 
+ +0.945420  -0.016442  -0.325439
+ +0.293091  +0.479364  +0.827229
+ +0.142402  -0.877462  +0.458019 # camera orientation
 cell_on: true # whether to visualize the cell
 transmittances: null # transmittances of the atoms, length should be the same as the number of atoms 
 heatmaps: null # heatmaps of the atoms, length should be the same as the number of atoms

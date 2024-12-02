@@ -19,10 +19,11 @@ def get_default_args(func) -> dict:
 def test_default_settings():
     default_settings = {
                         "config": None,
+                        "target": None,
                         "input_filepath": "./src/perovskite_POSCAR",
                         "output_filepath": "./outputs/default_settings_perovskite_POSCAR.png",
                         "repeatation": [1,1,1],
-                        "orientation": [+0.955480,+0.294974,-0.006949,-0.042581,+0.161156,+0.986010,+0.291967,-0.941817,+0.166542],
+                        "orientation": 'perspective',
                         "cell_on": False,
                         "transmittances": None,
                         "heatmaps": None,
@@ -36,10 +37,29 @@ def test_default_settings():
 def test_repeatation():
     default_settings = {
                         "config": None,
+                        "target": None,
                         "input_filepath": "./src/perovskite_POSCAR",
                         "output_filepath": "./outputs/repeatation_perovskite_POSCAR.png",
                         "repeatation": [5,5,3],
-                        "orientation": [+0.955480,+0.294974,-0.006949,-0.042581,+0.161156,+0.986010,+0.291967,-0.941817,+0.166542],
+                        "orientation": 'perspective',
+                        "cell_on": False,
+                        "transmittances": None,
+                        "heatmaps": None,
+                        "canvas_width": 960,
+                        "color_species": None,
+                        "color_index": None
+                        }
+    args = argparse.Namespace(**default_settings)
+    visual(args)
+
+def test_orientation():
+    default_settings = {
+                        "config": None,
+                        "target": None,
+                        "input_filepath": "./src/perovskite_POSCAR",
+                        "output_filepath": "./outputs/default_settings_perovskite_POSCAR.png",
+                        "repeatation": [1,1,1],
+                        "orientation": ' -0.839916  -0.275574  -0.467548 -0.525955  +0.200854  +0.826456 -0.133841  +0.940062  -0.313639',
                         "cell_on": False,
                         "transmittances": None,
                         "heatmaps": None,
@@ -53,10 +73,11 @@ def test_repeatation():
 def test_cell_on():
     default_settings = {
                         "config": None,
+                        "target": None,
                         "input_filepath": "./src/perovskite_POSCAR",
                         "output_filepath": "./outputs/cell_on_perovskite_POSCAR.png",
                         "repeatation": [1,1,1],
-                        "orientation": [+0.955480,+0.294974,-0.006949,-0.042581,+0.161156,+0.986010,+0.291967,-0.941817,+0.166542],
+                        "orientation": 'perspective',
                         "cell_on": True,
                         "transmittances": None,
                         "heatmaps": None,
@@ -70,10 +91,11 @@ def test_cell_on():
 def test_transmittances():
     default_settings = {
                         "config": None,
+                        "target": None,
                         "input_filepath": "./src/perovskite_POSCAR",
                         "output_filepath": "./outputs/transmittances_perovskite_POSCAR.png",
                         "repeatation": [1,1,1],
-                        "orientation": [+0.955480,+0.294974,-0.006949,-0.042581,+0.161156,+0.986010,+0.291967,-0.941817,+0.166542],
+                        "orientation": 'perspective',
                         "cell_on": False,
                         "transmittances": [0.1, 0.2, 0.2, 0.9, 0.9],
                         "heatmaps": None,
@@ -87,10 +109,11 @@ def test_transmittances():
 def test_heatmaps():
     default_settings = {
                         "config": None,
+                        "target": None,
                         "input_filepath": "./src/perovskite_POSCAR",
                         "output_filepath": "./outputs/heatmaps_perovskite_POSCAR.png",
                         "repeatation": [1,1,1],
-                        "orientation": [+0.955480,+0.294974,-0.006949,-0.042581,+0.161156,+0.986010,+0.291967,-0.941817,+0.166542],
+                        "orientation": 'perspective',
                         "cell_on": False,
                         "transmittances": None,
                         "heatmaps": [0.1, 0.2, 0.2, 0.9, 0.9],
@@ -104,10 +127,11 @@ def test_heatmaps():
 def test_canvas_width():
     default_settings = {
                         "config": None,
+                        "target": None,
                         "input_filepath": "./src/perovskite_POSCAR",
                         "output_filepath": "./outputs/canvas_width_perovskite_POSCAR.png",
                         "repeatation": [1,1,1],
-                        "orientation": [+0.955480,+0.294974,-0.006949,-0.042581,+0.161156,+0.986010,+0.291967,-0.941817,+0.166542],
+                        "orientation": 'perspective',
                         "cell_on": False,
                         "transmittances": None,
                         "heatmaps": None,
@@ -121,10 +145,11 @@ def test_canvas_width():
 def test_custom_colors():
     default_settings = {
                         "config": None,
+                        "target": None,
                         "input_filepath": "./src/perovskite_POSCAR",
                         "output_filepath": "./outputs/custom_colors_perovskite_POSCAR.png",
                         "repeatation": [1,1,1],
-                        "orientation": [+0.955480,+0.294974,-0.006949,-0.042581,+0.161156,+0.986010,+0.291967,-0.941817,+0.166542],
+                        "orientation": 'perspective',
                         "cell_on": False,
                         "transmittances": None,
                         "heatmaps": None,
@@ -140,7 +165,25 @@ def test_custom_colors():
                                          },
                         }
     args = argparse.Namespace(**default_settings)
-    visual(args)    
+    visual(args)
+
+def test_target():
+    default_settings = {
+                        "config": None,
+                        "target": "POSCAR",
+                        "input_filepath": None,
+                        "output_filepath": None,
+                        "repeatation": [1,1,1],
+                        "orientation": 'perspective',
+                        "cell_on": False,
+                        "transmittances": None,
+                        "heatmaps": None,
+                        "canvas_width": 960,
+                        "color_species": None,
+                        "color_index": None
+                        }
+    args = argparse.Namespace(**default_settings)
+    visual(args)
 
 def test_config():
     default_settings = {
@@ -158,6 +201,8 @@ def main():
     test_canvas_width()
     test_custom_colors()
     test_config()
+    test_orientation()
+    test_target()
 
 if __name__ == "__main__":
     main()
