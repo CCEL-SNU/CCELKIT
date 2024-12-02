@@ -26,7 +26,7 @@ def main():
 
     args = parser.parse_args()
 
-    if args.command == 'povray':
+    if args.command == 'visual':
         visual(args=args)
     else:
         parser.print_help()
