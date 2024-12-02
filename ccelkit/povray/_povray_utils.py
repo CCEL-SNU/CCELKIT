@@ -12,8 +12,6 @@ import click
 import os
 import yaml
 
-@click.command()
-@click.option('--output', '-o', default='config.yml', help='설정 파일 저장 경로')
 def create_config(output):
     default_config = {
         "target": None,
