@@ -36,9 +36,9 @@ ccelkit visual [옵션]
 
 #### 카메라 각도 조절 방법
 
-![기본 vesta 이미지](./images/step_01.png)
-![step02](./images/step_02.png)
-![step03](./images/step_03.png)
+![기본 vesta 이미지](./images/ccelkit_set_orientation/step_01.png)
+![step02](./images/ccelkit_set_orientation/step_02.png)
+![step03](./images/ccelkit_set_orientation/step_03.png)
 
 #### 색상 지정 권장사항
 원자 종류별(`color_species`) 또는 원자 인덱스별(`color_index`) 색상 지정은 명령줄 인터페이스로 하기에는 복잡하므로, 설정 파일(config.yaml)을 사용하는 것을 권장합니다.
