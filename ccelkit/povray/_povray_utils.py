@@ -11,26 +11,26 @@ import yaml
 
 def create_config():
     default_config = {
-        "target": None,
-        "input_filepath": "./src/perovskite_POSCAR",
-        "output_filepath": "./outputs/config_perovskite_POSCAR.png",
-        "repeatation": [1, 1, 1],
-        "orientation": "0.945420 -0.016442 -0.325439 0.293091 0.479364 0.827229 0.142402 -0.877462 0.458019",
-        "cell_on": True,
-        "transmittances": None,
-        "heatmaps": None,
-        "canvas_width": 800,
+        "target": "POSCAR", # String what target files include
+        "input_filepath": None, # if target is specified, input_filepath must be None value
+        "output_filepath": None, # if target is specified, output_filepath must be None value
+        "repeatation": [1, 1, 1], # 3x1 array
+        "orientation": "perspective", # "top", "side_x", "side_y", "perspective" or vesta orientation 3x3 array
+        "cell_on": True, # true or false
+        "transmittances": None, # array of float, 1 : 100% transmittance, 0 : 0% transmittance
+        "heatmaps": None, # array of float, 1 : 100% red, 0 : 100% blue
+        "canvas_width": 800, # pixel number of canvas width
         "color_species": {
-            "Re": [0.580, 0, 0.827],
-            "H": [0.529, 0.808, 0.980],
-            "O": [0.0, 0.0, 1.0],
-            "Ru": [0.827, 0.827, 0.827]
+            # "Re": [0.580, 0, 0.827],
+            # "H": [0.529, 0.808, 0.980],
+            # "O": [0.0, 0.0, 1.0],
+            # "Ru": [0.827, 0.827, 0.827]
         },
         "color_index": {
-            0: [0.580, 0, 0.827],
-            1: [0.529, 0.808, 0.980],
-            2: [1.000, 0.051, 0.051],
-            3: [0.0, 0.0, 1.0]
+            # 0: [0.580, 0, 0.827],
+            # 1: [0.529, 0.808, 0.980],
+            # 2: [1.000, 0.051, 0.051],
+            # 3: [0.0, 0.0, 1.0]
         }
     }
     
@@ -97,3 +97,25 @@ def set_custom_colors(atoms: Atoms, povray_settings: dict
         colors[i] = color_index_dict.get(i,default_color)
     povray_settings.update({'colors': colors})
     return None
+
+def set_position_smoothing(atoms: Atoms) -> Atoms:
+    atoms_copied = atoms.copy()
+    cell = atoms_copied .get_cell()
+    a, b, c = cell[0], cell[1], cell[2]
+
+    positions = atoms_copied.get_positions()
+
+    limit_a = 0.99 * np.linalg.norm(a)
+    limit_b = 0.99 * np.linalg.norm(b)
+    limit_c = 0.99 * np.linalg.norm(c)
+
+    for i, pos in enumerate(positions):
+        if pos[0] > limit_a:
+            positions[i] -= a
+        if pos[1] > limit_b:
+            positions[i] -= b
+        if pos[2] > limit_c:
+            positions[i] -= c
+
+    atoms_copied.set_positions(positions)
+    return atoms_copied

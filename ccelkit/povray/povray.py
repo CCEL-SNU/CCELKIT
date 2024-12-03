@@ -11,6 +11,7 @@ from ._povray_utils import set_camera_orientation
 from ._povray_utils import set_custom_colors
 from ._povray_utils import parse_orientation
 from ._povray_utils import create_config
+from ._povray_utils import set_position_smoothing
 import yaml
 from typing import List,Dict
 
@@ -27,6 +28,7 @@ def to_povray_image(input_filepath: str
 
 
     atoms = read(input_filepath)
+    atoms = set_position_smoothing(atoms)
     atoms = set_repeatation(atoms,repeatation)
     atoms = set_cell_on(atoms,cell_on)
 
