@@ -4,9 +4,12 @@ CCELKIT의 visual 기능은 원자 구조 파일을 POV-Ray를 사용하여 고�
 
 ## 필수 요구사항
 
-- POV-Ray가 설치되어 있어야 합니다
+- POV-Ray가 설치되어 있어야 합니다 (설치 방법은 https://www.notion.so/aracho/Server-POVRAY-install-d827f5157a534446a960a1fbc42de3f0 참고)
 - 환경 변수 `POVRAY`에 POV-Ray 설치 경로가 지정되어 있어야 합니다
-
+```bash
+# for example,in ".bashrc" file
+export POVRAY="/home/pn50212/povray-3.6"
+```
 ## 사용 방법
 
 ### 1. 명령줄 인터페이스 (CLI) 사용
