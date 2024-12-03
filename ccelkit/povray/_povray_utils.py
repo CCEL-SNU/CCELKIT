@@ -16,7 +16,7 @@ def set_postfix(filepath: str) -> str:
         file_name = filepath
         extension = None
     
-    if extension.endswith('traj') or file_name.endswith('XDATCAR'):
+    if (extension != None and extension.endswith('traj')) or file_name.endswith('XDATCAR'):
         return f"{file_name}.gif"
     else:
         return f"{file_name}.png"
