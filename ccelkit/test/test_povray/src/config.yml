@@ -6,7 +6,7 @@ orientation:
  +0.945420  -0.016442  -0.325439
  +0.293091  +0.479364  +0.827229
  +0.142402  -0.877462  +0.458019 # camera orientation
-cell_on: true # whether to visualize the cell
+cell_off: true # whether to visualize the cell
 transmittances: null # transmittances of the atoms, length should be the same as the number of atoms 
 heatmaps: null # heatmaps of the atoms, length should be the same as the number of atoms
 canvas_width: 800 # width of the canvas

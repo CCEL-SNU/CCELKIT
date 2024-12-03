@@ -24,12 +24,13 @@ def test_default_settings():
                         "output_filepath": "./outputs/default_settings_perovskite_POSCAR.png",
                         "repeatation": [1,1,1],
                         "orientation": 'perspective',
-                        "cell_on": False,
+                        "cell_off": False,
                         "transmittances": None,
                         "heatmaps": None,
                         "canvas_width": 960,
                         "color_species": None,
-                        "color_index": None
+                        "color_index": None,
+                        "frame_per_second": 24
                         }
     args = argparse.Namespace(**default_settings)
     visual(args)
@@ -42,12 +43,13 @@ def test_repeatation():
                         "output_filepath": "./outputs/repeatation_perovskite_POSCAR.png",
                         "repeatation": [5,5,3],
                         "orientation": 'perspective',
-                        "cell_on": False,
+                        "cell_off": False,
                         "transmittances": None,
                         "heatmaps": None,
                         "canvas_width": 960,
                         "color_species": None,
-                        "color_index": None
+                        "color_index": None,
+                        "frame_per_second": 24
                         }
     args = argparse.Namespace(**default_settings)
     visual(args)
@@ -60,30 +62,32 @@ def test_orientation():
                         "output_filepath": "./outputs/default_settings_perovskite_POSCAR.png",
                         "repeatation": [1,1,1],
                         "orientation": ' -0.839916  -0.275574  -0.467548 -0.525955  +0.200854  +0.826456 -0.133841  +0.940062  -0.313639',
-                        "cell_on": False,
+                        "cell_off": False,
                         "transmittances": None,
                         "heatmaps": None,
                         "canvas_width": 960,
                         "color_species": None,
-                        "color_index": None
+                        "color_index": None,
+                        "frame_per_second": 24
                         }
     args = argparse.Namespace(**default_settings)
     visual(args)
 
-def test_cell_on():
+def test_cell_off():
     default_settings = {
                         "config": None,
                         "target": None,
                         "input_filepath": "./src/perovskite_POSCAR",
-                        "output_filepath": "./outputs/cell_on_perovskite_POSCAR.png",
+                        "output_filepath": "./outputs/cell_off_perovskite_POSCAR.png",
                         "repeatation": [1,1,1],
                         "orientation": 'perspective',
-                        "cell_on": True,
+                        "cell_off": True,
                         "transmittances": None,
                         "heatmaps": None,
                         "canvas_width": 960,
                         "color_species": None,
-                        "color_index": None
+                        "color_index": None,
+                        "frame_per_second": 24
                         }
     args = argparse.Namespace(**default_settings)
     visual(args)
@@ -96,12 +100,13 @@ def test_transmittances():
                         "output_filepath": "./outputs/transmittances_perovskite_POSCAR.png",
                         "repeatation": [1,1,1],
                         "orientation": 'perspective',
-                        "cell_on": False,
+                        "cell_off": False,
                         "transmittances": [0.1, 0.2, 0.2, 0.9, 0.9],
                         "heatmaps": None,
                         "canvas_width": 960,
                         "color_species": None,
-                        "color_index": None
+                        "color_index": None,
+                        "frame_per_second": 24
                         }
     args = argparse.Namespace(**default_settings)
     visual(args)
@@ -114,12 +119,13 @@ def test_heatmaps():
                         "output_filepath": "./outputs/heatmaps_perovskite_POSCAR.png",
                         "repeatation": [1,1,1],
                         "orientation": 'perspective',
-                        "cell_on": False,
+                        "cell_off": False,
                         "transmittances": None,
                         "heatmaps": [0.1, 0.2, 0.2, 0.9, 0.9],
                         "canvas_width": 960,
                         "color_species": None,
-                        "color_index": None
+                        "color_index": None,
+                        "frame_per_second": 24
                         }
     args = argparse.Namespace(**default_settings)
     visual(args)
@@ -132,12 +138,13 @@ def test_canvas_width():
                         "output_filepath": "./outputs/canvas_width_perovskite_POSCAR.png",
                         "repeatation": [1,1,1],
                         "orientation": 'perspective',
-                        "cell_on": False,
+                        "cell_off": False,
                         "transmittances": None,
                         "heatmaps": None,
                         "canvas_width": 1920,
                         "color_species": None,
-                        "color_index": None
+                        "color_index": None,
+                        "frame_per_second": 24
                         }
     args = argparse.Namespace(**default_settings)
     visual(args)
@@ -150,7 +157,7 @@ def test_custom_colors():
                         "output_filepath": "./outputs/custom_colors_perovskite_POSCAR.png",
                         "repeatation": [1,1,1],
                         "orientation": 'perspective',
-                        "cell_on": False,
+                        "cell_off": False,
                         "transmittances": None,
                         "heatmaps": None,
                         "canvas_width": 960,
@@ -163,6 +170,7 @@ def test_custom_colors():
                         "color_index": {
                                             4 : [0.0, 0.0, 1.0],
                                          },
+                        "frame_per_second": 24
                         }
     args = argparse.Namespace(**default_settings)
     visual(args)
@@ -175,15 +183,36 @@ def test_target():
                         "output_filepath": None,
                         "repeatation": [1,1,1],
                         "orientation": 'perspective',
-                        "cell_on": False,
+                        "cell_off": False,
                         "transmittances": None,
                         "heatmaps": None,
                         "canvas_width": 960,
                         "color_species": None,
-                        "color_index": None
+                        "color_index": None,
+                        "frame_per_second": 24
                         }
     args = argparse.Namespace(**default_settings)
     visual(args)
+
+def test_gif():
+    default_settings = {
+                        "config": None,
+                        "target": None,
+                        "input_filepath": "./src/test.traj",
+                        "output_filepath": "./outputs/test.gif",
+                        "repeatation": [1,1,1],
+                        "orientation": 'perspective',
+                        "cell_off": False,
+                        "transmittances": None,
+                        "heatmaps": None,
+                        "canvas_width": 800,
+                        "color_species": None,
+                        "color_index": None,
+                        "frame_per_second": 24
+                        }
+    args = argparse.Namespace(**default_settings)
+    visual(args)
+
 
 def test_config():
     default_settings = {
@@ -195,7 +224,7 @@ def test_config():
 def main():
     test_default_settings()
     test_repeatation()
-    test_cell_on()
+    test_cell_off()
     test_transmittances()
     test_heatmaps()
     test_canvas_width()
@@ -203,6 +232,6 @@ def main():
     test_config()
     test_orientation()
     test_target()
-
+    test_gif()
 if __name__ == "__main__":
     main()
