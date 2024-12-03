@@ -9,6 +9,18 @@ from scipy.spatial.transform import Rotation as R
 import os
 import yaml
 
+def set_postfix(filepath: str) -> str:
+    if '.' in filepath:
+        file_name, extension = os.path.splitext(filepath)
+    else:
+        file_name = filepath
+        extension = None
+    
+    if extension.endswith('traj') or file_name.endswith('XDATCAR'):
+        return f"{file_name}.gif"
+    else:
+        return f"{file_name}.png"
+
 def create_config():
     default_config = {
         "target": "POSCAR", # String what target files include
@@ -16,7 +28,7 @@ def create_config():
         "output_filepath": None, # if target is specified, output_filepath must be None value
         "repeatation": [1, 1, 1], # 3x1 array
         "orientation": "perspective", # "top", "side_x", "side_y", "perspective" or vesta orientation 3x3 array
-        "cell_on": True, # true or false
+        "cell_off": False, # true or false
         "transmittances": None, # array of float, 1 : 100% transmittance, 0 : 0% transmittance
         "heatmaps": None, # array of float, 1 : 100% red, 0 : 100% blue
         "canvas_width": 800, # pixel number of canvas width
@@ -55,9 +67,9 @@ def set_repeatation(atoms: Atoms, repeatation: list) -> Atoms:
     atoms = atoms.repeat(repeatation)
     return atoms
 
-def set_cell_on(atoms: Atoms, cell_on: bool) -> Atoms:
+def set_cell_off(atoms: Atoms, cell_off: bool) -> Atoms:
     atoms_copied = atoms.copy()
-    if not cell_on:
+    if cell_off:
         atoms_copied.cell = None
     return atoms_copied
 
@@ -86,6 +98,9 @@ def set_camera_orientation(povray_settings: dict, orientation: List[float]) -> s
 def set_custom_colors(atoms: Atoms, povray_settings: dict
                       , color_species_dict: Union[Dict[str,List[float]],None]
                       , color_index_dict: Union[Dict[int,List[float]],None]) -> None:
+    if (not color_species_dict) and (not color_index_dict):
+        return None
+
     colors = povray_settings.get('colors', [0.0 for _ in range(len(atoms))])
     if not color_species_dict:
         color_species_dict = {}
@@ -119,3 +134,7 @@ def set_position_smoothing(atoms: Atoms) -> Atoms:
 
     atoms_copied.set_positions(positions)
     return atoms_copied
+
+def set_duration(frame_per_second: int) -> int:
+    duration = int(1000 / frame_per_second)  # ms = 1000ms/s * (1s/fps)
+    return duration

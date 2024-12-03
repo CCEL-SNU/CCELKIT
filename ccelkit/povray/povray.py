@@ -3,7 +3,7 @@ from ase.io import read, write
 from PIL import Image
 import subprocess
 from ._povray_utils import set_repeatation
-from ._povray_utils import set_cell_on
+from ._povray_utils import set_cell_off
 from ._povray_utils import set_canvas_width
 from ._povray_utils import set_transmittances
 from ._povray_utils import set_heatmaps
@@ -12,54 +12,88 @@ from ._povray_utils import set_custom_colors
 from ._povray_utils import parse_orientation
 from ._povray_utils import create_config
 from ._povray_utils import set_position_smoothing
+from ._povray_utils import set_postfix
+from ._povray_utils import set_duration
 import yaml
-from typing import List,Dict
+from typing import List,Dict,Union
+from tqdm import tqdm
 
 def to_povray_image(input_filepath: str
                     , output_filepath: str
-                    , repeatation: List[int]
-                    , orientation: List[float]
-                    , cell_on: bool
-                    , transmittances: List[float]
-                    , heatmaps: List[float]
-                    , canvas_width: int
-                    , color_species: Dict[str,List[float]]
-                    , color_index: Dict[str,List[float]]):
+                    , repeatation: List[int] = [1,1,1]
+                    , orientation: str = 'perspective'
+                    , cell_off: bool = False
+                    , transmittances: Union[List[float],None] = None
+                    , heatmaps: Union[List[float],None] = None
+                    , canvas_width: int = 1000
+                    , color_species: Union[Dict[str,List[float]],None] = None
+                    , color_index: Union[Dict[str,List[float]],None] = None
+                    , frame_per_second: int = 24):
+    
+    orientation = parse_orientation(orientation)
+    
+    is_trajectory = input_filepath.endswith('XDATCAR') or input_filepath.endswith('.traj')
+    temp_images = []
+    
+    atoms_list = read(input_filepath, index=':') if is_trajectory else [read(input_filepath)]
+    
+    for i, atoms in enumerate(atoms_list):
+        atoms = set_position_smoothing(atoms)
+        atoms = set_repeatation(atoms, repeatation)
+        atoms = set_cell_off(atoms, cell_off)
 
+        # POV-Ray 설정
+        povray_settings = {}
+        if is_trajectory:
+            povray_settings['background'] = 'White'
+        set_canvas_width(povray_settings, canvas_width)
+        set_transmittances(povray_settings, transmittances)
+        set_heatmaps(povray_settings, heatmaps)
+        set_custom_colors(atoms, povray_settings, color_species, color_index)
+        rotation = set_camera_orientation(povray_settings, orientation)
 
-    atoms = read(input_filepath)
-    atoms = set_position_smoothing(atoms)
-    atoms = set_repeatation(atoms,repeatation)
-    atoms = set_cell_on(atoms,cell_on)
+        povray_base_path = os.environ.get("POVRAY")
+        if not povray_base_path:
+            raise EnvironmentError("환경 변수 'POVRAY'가 설정되지 않았습니다.")
+        povray_include_path = os.path.join(povray_base_path, "include")
 
-    # POV-Ray 설정
-    povray_settings = {}
-    set_canvas_width(povray_settings, canvas_width)
-    set_transmittances(povray_settings, transmittances)
-    set_heatmaps(povray_settings, heatmaps)
-    set_custom_colors(atoms, povray_settings, color_species, color_index)
-    # set camera orientation, refer the "VESTA orientation tap"
-    rotation = set_camera_orientation(povray_settings, orientation)
+        write('./temp.pov', atoms, rotation=rotation, povray_settings=povray_settings)
+        with open('./temp.ini', 'a') as file:
+            file.write(f'Library_Path="{povray_include_path}"\n')
 
-    povray_base_path = os.environ.get("POVRAY")
-    if not povray_base_path:
-        raise EnvironmentError("환경 변수 'POVRAY'가 설정되지 않았습니다.")
-    povray_include_path = os.path.join(povray_base_path, "include")
+        povray_command = ['povray', '-D', f'+L{povray_include_path}', "./temp.pov", 'temp.ini']
+        with subprocess.Popen(povray_command, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL) as process:
+            process.wait()
 
-    write('./temp.pov', atoms, rotation=rotation, povray_settings=povray_settings)
-    with open('./temp.ini', 'a') as file:
-        file.write(f'Library_Path="{povray_include_path}"\n')
+        if is_trajectory:
+            img = Image.open('./temp.png')
+            new_img = Image.new('RGBA', img.size, (255, 255, 255, 0))
+            new_img.paste(img, (0, 0))
+            temp_images.append(new_img)
+            img.close()
+        else:
+            img = Image.open('./temp.png')
+            img.save(output_filepath)
+            img.close()
 
-    povray_command = ['povray', f'+L{povray_include_path}', "./temp.pov", 'temp.ini']
-    subprocess.run(povray_command, check=True)
+        os.remove("./temp.ini")
+        os.remove("./temp.pov")
+        os.remove("./temp.png")
 
-    temp_image_path = './temp.png'
-    img = Image.open(temp_image_path)
-    img.save(output_filepath)
+    if is_trajectory and temp_images:
+        try:
+            temp_images[0].save(
+                output_filepath,
+                save_all=True,
+                append_images=temp_images[1:],
+                duration=set_duration(frame_per_second),
+                loop=0,
+                disposal=2
+            )
+        finally:
+            for img in temp_images:
+                img.close()
 
-    os.remove("./temp.ini")
-    os.remove("./temp.pov")
-    os.remove("./temp.png")
     return None
     
 def visual(args):
@@ -70,27 +104,28 @@ def visual(args):
         input_filepath = config['input_filepath']
         output_filepath = config['output_filepath']
         repeatation = config['repeatation']
-        orientation = parse_orientation(config['orientation'])
-        cell_on = config['cell_on']
+        orientation = config['orientation']
+        cell_off = config['cell_off']
         transmittances = config['transmittances']
         heatmaps = config['heatmaps']
         canvas_width = config['canvas_width']
         color_species = config['color_species']
         color_index = config['color_index']
-
+        frame_per_second = config['frame_per_second']
     else:
         target: str = args.target
         config: str = args.config
         input_filepath: str = args.input_filepath
         output_filepath: str = args.output_filepath
         repeatation: List[int] = args.repeatation
-        orientation: List[float] = parse_orientation(args.orientation)
-        cell_on: bool = args.cell_on
+        orientation: List[float] = args.orientation
+        cell_off: bool = args.cell_off
         transmittances:List[float]  = args.transmittances
         heatmaps:List[float] = args.heatmaps
         canvas_width: int = args.canvas_width
         color_species: Dict[str,List[float]] = args.color_species
         color_index: Dict[str,List[float]] = args.color_index
+        frame_per_second: int = args.frame_per_second
 
     files_to_be_processed = []
     files_to_be_saved = []
@@ -107,7 +142,7 @@ def visual(args):
                         file_name, _ = os.path.splitext(file)
                     else:
                         file_name = file
-                    new_file_name = f"{file_name}.png"
+                    new_file_name = set_postfix(file_name)
                     new_file_path = os.path.abspath(os.path.join(root, new_file_name))
                     files_to_be_saved.append(new_file_path)
     else:
@@ -118,6 +153,15 @@ def visual(args):
                          'img_' + os.path.basename(path) if not os.path.basename(path).startswith('img_') else os.path.basename(path))
                          for path in files_to_be_saved]
 
-    for input_filepath, output_filepath in zip(files_to_be_processed, files_to_be_saved):
+    
+    for input_filepath, output_filepath in tqdm(zip(files_to_be_processed, files_to_be_saved), 
+                                              desc="이미지 생성 중", 
+                                              total=len(files_to_be_processed),
+                                              unit="개"):
         print(f"{input_filepath} -> {output_filepath}")
-        to_povray_image(input_filepath, output_filepath, repeatation, orientation, cell_on, transmittances, heatmaps, canvas_width, color_species, color_index)
+        to_povray_image(input_filepath, output_filepath
+                        , repeatation, orientation
+                        , cell_off, transmittances
+                        , heatmaps, canvas_width
+                        , color_species, color_index
+                        , frame_per_second)
