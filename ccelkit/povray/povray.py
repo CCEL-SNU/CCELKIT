@@ -82,6 +82,9 @@ def to_povray_image(input_filepath: str
 
     if is_trajectory and temp_images:
         try:
+            if not output_filepath.endswith('.gif'):
+                output_filepath = os.path.splitext(output_filepath)[0] + '.gif'
+                
             temp_images = [img.convert('RGB') for img in temp_images]
             temp_images[0].save(
                 output_filepath,
