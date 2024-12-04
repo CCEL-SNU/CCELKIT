@@ -82,6 +82,7 @@ def to_povray_image(input_filepath: str
 
     if is_trajectory and temp_images:
         try:
+            temp_images = [img.convert('RGB') for img in temp_images]
             temp_images[0].save(
                 output_filepath,
                 save_all=True,
