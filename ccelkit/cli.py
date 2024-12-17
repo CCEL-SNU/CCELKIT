@@ -30,6 +30,17 @@ def main():
     visual_subparsers = parser_visual.add_subparsers(dest="visual_command", help="Visual commands")
     visual_subparsers.add_parser("create_config", help="create default config file")
 
+    parser_packmol = subparsers.add_parser('packmol', help='for packmol operations')
+    packmol_subparsers = parser_packmol.add_subparsers(dest="packmol_command", help="Packmol commands")
+    
+    packmol_init = packmol_subparsers.add_parser('init', help='initialize packmol')
+    
+    packmol_make_config = packmol_subparsers.add_parser('make_config', help='create packmol configuration')
+    packmol_make_config.add_argument('value', type=str, help='number, list, or string value')
+    
+    packmol_analyse = packmol_subparsers.add_parser('analyse', help='analyze packmol results')
+    packmol_analyse.add_argument('value', type=str, help='number, list, or string value')
+
     args = parser.parse_args()
 
     if args.command == 'visual':
@@ -37,6 +48,16 @@ def main():
             create_config()
         else:
             visual(args=args)
+    elif args.command == 'packmol':
+        if args.packmol_command == 'init':
+            # TODO: packmol init 함수 구현
+            pass
+        elif args.packmol_command == 'make_config':
+            # TODO: packmol make_config 함수 구현
+            pass
+        elif args.packmol_command == 'analyse':
+            # TODO: packmol analyse 함수 구현
+            pass
     else:
         parser.print_help()
 
