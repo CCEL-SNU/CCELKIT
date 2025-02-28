@@ -1,0 +1,27 @@
+tolerance 2.0
+filetype pdb
+seed 5613303
+
+output /home/pn50212/2024/07_LARP/03_in_one_system/10_Exp/toluene_PMMA/POSCARs/00.pdb
+
+structure /home/pn50212/2024/07_LARP/03_in_one_system/src/pmma_50_wrapped.pdb
+   number 1
+   center
+   fixed 19.32708208785937 17.3504106777218 21.13658650970293 0. 0. 0.
+end structure
+
+structure /home/pn50212/2024/07_LARP/03_in_one_system/src/toluene.pdb
+   number 277
+   inside box 0.0 0.0 0.0 39.0 38.0 38.0
+end structure
+
+structure /home/pn50212/2024/07_LARP/03_in_one_system/src/oac.pdb
+   number 10
+   inside box 39.0 0.0 0.0 78.0 38.0 38.0
+end structure
+
+structure /home/pn50212/2024/07_LARP/03_in_one_system/src/dmf.pdb
+   number 395
+   inside box 39.0 0.0 0.0 78.0 38.0 38.0
+end structure
+

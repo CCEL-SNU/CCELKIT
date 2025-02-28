@@ -8,6 +8,8 @@ from scipy.spatial.transform import Rotation as R
 from .povray import visual
 from .povray._povray_utils import *
 
+from .packmol import make_system, init_dir, init_config
+
 def main():
     parser = ArgumentParser(description="Function commands")
     subparsers = parser.add_subparsers(dest="command", help="Available commands")
@@ -30,16 +32,12 @@ def main():
     visual_subparsers = parser_visual.add_subparsers(dest="visual_command", help="Visual commands")
     visual_subparsers.add_parser("create_config", help="create default config file")
 
-    parser_packmol = subparsers.add_parser('packmol', help='for packmol operations')
-    packmol_subparsers = parser_packmol.add_subparsers(dest="packmol_command", help="Packmol commands")
-    
-    packmol_init = packmol_subparsers.add_parser('init', help='initialize packmol')
-    
-    packmol_make_config = packmol_subparsers.add_parser('make_config', help='create packmol configuration')
-    packmol_make_config.add_argument('value', type=str, help='number, list, or string value')
-    
-    packmol_analyse = packmol_subparsers.add_parser('analyse', help='analyze packmol results')
-    packmol_analyse.add_argument('value', type=str, help='number, list, or string value')
+    parser_make_system = subparsers.add_parser('make_system', help='make packmol system')
+    parser_make_system.add_argument("-c","--config",type=str,default=None,help="config file path")
+
+    make_system_subparsers = parser_make_system.add_subparsers(dest="make_system_command", help="Make system commands")
+    make_system_subparsers.add_parser("init_dir", help="initialize directory")
+    make_system_subparsers.add_parser("init_config", help="initialize config")
 
     args = parser.parse_args()
 
@@ -48,16 +46,14 @@ def main():
             create_config()
         else:
             visual(args=args)
-    elif args.command == 'packmol':
-        if args.packmol_command == 'init':
-            # TODO: packmol init 함수 구현
-            pass
-        elif args.packmol_command == 'make_config':
-            # TODO: packmol make_config 함수 구현
-            pass
-        elif args.packmol_command == 'analyse':
-            # TODO: packmol analyse 함수 구현
-            pass
+    elif args.command == 'make_system':
+        if hasattr(args, 'make_system_command') and args.make_system_command == 'init_dir':
+            init_dir()
+        elif hasattr(args, 'make_system_command') and args.make_system_command == 'init_config':
+            init_config()
+        else:
+            make_system(args.config)
+
     else:
         parser.print_help()
 
