@@ -1,8 +1,8 @@
 tolerance 2.0
 filetype xyz
-seed 46
+seed 45
 
-output /home/pn50212/ccelkit/ccelkit/test/test_packmol/out/liquid_gas_packmol.xyz
+output /home/pn50212/ccelkit/ccelkit/test/test_packmol/out/liquid_gas_packmol_03.xyz
 
 
 structure /home/pn50212/ccelkit/ccelkit/test/test_packmol/src/liquid/pinp_H2.xyz

@@ -63,6 +63,10 @@ def init_config(root_dir:str = os.getcwd())->None:
 
 
 def make_system(config_path:str)->None:
+    packmol_path = os.environ.get('PACKMOL')
+    if packmol_path is None:
+        raise EnvironmentError("PACKMOL 환경 변수가 설정되어 있지 않습니다.")
+    
     with open(config_path, 'r') as f:
         config = yaml.safe_load(f)
     src_dir = config.get("src_dir", os.path.join(os.getcwd(), 'src'))
@@ -108,17 +112,16 @@ def make_system(config_path:str)->None:
             pobj.set_system_info({"num_molecules": num_atoms, "mol_indices": mol_indices})
 
         # make liquid and gas packmol input
-        liquid_gas_packmol_inp = os.path.join(out_dir, 'liquid_gas_packmol.inp')
-        liquid_gas_packmol_xyz = os.path.join(out_dir, 'liquid_gas_packmol.xyz')
+        liquid_gas_packmol_inp = os.path.join(out_dir, f'liquid_gas_packmol_{system_idx:02d}.inp')
+        liquid_gas_packmol_xyz = os.path.join(out_dir, f'liquid_gas_packmol_{system_idx:02d}.xyz')
         with open(liquid_gas_packmol_inp, 'w') as f:
             f.write(write_packmol_header(tolerance, seed + system_idx))
             f.write(f"output {liquid_gas_packmol_xyz}\n\n")
             f.write(write_liquid_gas_packmol_inp(pliquids, pgases))
 
-        try:
-            result = subprocess.run(f"packmol < {liquid_gas_packmol_inp}", shell=True, timeout=30)
-        except subprocess.TimeoutExpired:
-            raise RuntimeError("Packmol execution timed out (timeout = 30 sec). Please check the input file and the system resources.")
+        print(f"Packmol 실행 중: {liquid_gas_packmol_inp}")
+        result = subprocess.run(f"{packmol_path} < {liquid_gas_packmol_inp}", shell=True, timeout=30)
+
 
         solid_POSCAR = Atoms(cell=cell, pbc=True)
         for psolid in psolids:
