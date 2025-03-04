@@ -55,7 +55,8 @@ def init_config(root_dir:str = os.getcwd())->None:
         "gas": gas_dict,
         "tolerance": 2.0,
         "seed": 42,
-        "population": 5
+        "population": 5,
+        "solid_fluid_tolerance": 3.0
     }
     with open(os.path.join(root_dir, 'config_init.yml'), 'w') as f:
         yaml.dump(config, f, indent=4)
@@ -138,6 +139,8 @@ def make_system(config_path:str)->None:
         system_atoms = solid_xyz.copy()
         system_atoms.cell = cell
         system_atoms.pbc = True
+        system_atoms.wrap()
+        system_temp = system_atoms.copy()
 
         c = len(system_atoms)
         for pobj in pliquids + pgases:
@@ -147,13 +150,13 @@ def make_system(config_path:str)->None:
             for i in range(num_mol):
                 mol_indices = pobj.info['system']['mol_indices'][i]
                 mol_atoms = liquid_gas_xyz[mol_indices]
-
-                system_atoms += mol_atoms
+                system_atoms_copied = system_temp.copy()    
+                system_atoms_copied += mol_atoms
 
                 is_valid = True
                 for t in range(len(mol_atoms)):
-                    d_array = system_atoms.get_distances(a=solid_length+t,indices=list(range(solid_length)), mic=True)
-                    if d_array.min() < 2.0:
+                    d_array = system_atoms_copied.get_distances(a=solid_length+t,indices=list(range(solid_length)), mic=True)
+                    if (d_array.min() < config['solid_fluid_tolerance']):
                         is_valid = False
                         break
 
@@ -162,8 +165,8 @@ def make_system(config_path:str)->None:
                     system_atoms += mol_atoms
                     c += len(mol_atoms)
                     a += 1
-
+            
             pobj.set_system_info({"num_atoms": a, "mol_indices": new_mol_indices})
-
+        print(f"valid ratio : {100 * a/num_mol : .2f}%")
         system_POSCAR_path = os.path.join(out_dir, f'system_{system_idx:02d}_POSCAR')
         write(system_POSCAR_path, system_atoms)

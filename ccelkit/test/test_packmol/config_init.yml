@@ -16,3 +16,4 @@ solid:
 solid_dir: /home/pn50212/ccelkit/ccelkit/test/test_packmol/src/solid
 src_dir: /home/pn50212/ccelkit/ccelkit/test/test_packmol/src
 tolerance: 2.0
+solid_fluid_tolerance: 3.0
