@@ -26,10 +26,13 @@ def init_dir(root_dir=os.getcwd())->None:
 
     return root_dir, src_dir, solid_dir, liquid_dir, gas_dir, cell_path
 
-def init_config(root_dir:str = os.getcwd())->None:
+def init_config(root_dir:str = os.getcwd(), preset:str = False)->None:
     root_dir = os.path.abspath(root_dir)
     src_dir = os.path.join(root_dir, 'src')
     out_dir = os.path.join(root_dir, 'out')
+    
+    if preset:
+        set_preset(src_dir)
 
     cell_path = os.path.join(src_dir, 'cell_POSCAR')
     solid_dir = os.path.join(src_dir, 'solid')
