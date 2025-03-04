@@ -6,6 +6,9 @@ from ._packmol_class import *
 from typing import List, Dict, Any
 import subprocess
 from ase.cell import Cell
+from ase.build import molecule
+from ase.collections import g2
+
 
 def check_root_dir(root_dir=os.getcwd())->None:
     if not os.path.exists(root_dir):
@@ -200,7 +203,49 @@ def write_liquid_gas_packmol_inp(pliquids:List[PLiquid], pgases:List[PGas])->Non
     return packmol_str
 
 
+def set_preset(src_dir: str) -> None:
+    # (1) cell_POSCAR 파일 작성
+    x_max = float(input("Enter x_max: "))
+    y_max = float(input("Enter y_max: "))
+    z_max = float(input("Enter z_max: "))
+    
+    # Create lattice and add a hydrogen atom at the center
+    lattice = np.array([[x_max, 0, 0], [0, y_max, 0], [0, 0, z_max]])
+    atoms = Atoms('H', positions=[[x_max/2, y_max/2, z_max/2]], cell=lattice,pbc=True)
+    poscar_path = os.path.join(src_dir, 'cell_POSCAR')
+    write(poscar_path, atoms)
 
+    # (2) liquid 디렉토리에 molecule.xyz 작성
+    liquid_dir = os.path.join(src_dir, 'liquid')
+    os.makedirs(liquid_dir, exist_ok=True)
+    
+    while True:
+        molecule_name = input("Enter molecule name (or 't' to terminate): ")
+        if molecule_name == 't':
+            break
+        if molecule_name in g2.names:
+            mol = molecule(molecule_name, vacuum=20)
+            xyz_path = os.path.join(liquid_dir, f"{molecule_name}.xyz")
+            write(xyz_path, mol, format='xyz')
+        else:
+            print("Available molecules:", g2.names)
+            print(f"The molecule '{molecule_name}' is not in the list.")
+
+    # (3) gas 디렉토리에 반복
+    gas_dir = os.path.join(src_dir, 'gas')
+    os.makedirs(gas_dir, exist_ok=True)
+    
+    while True:
+        molecule_name = input("Enter gas molecule name (or 't' to terminate): ")
+        if molecule_name == 't':
+            break
+        if molecule_name in g2.names:
+            mol = molecule(molecule_name, vacuum=20)
+            xyz_path = os.path.join(gas_dir, f"{molecule_name}.xyz")
+            write(xyz_path, mol, format='xyz')
+        else:
+            print("Available molecules:", g2.names)
+            print(f"The molecule '{molecule_name}' is not in the list.")
 
 
             

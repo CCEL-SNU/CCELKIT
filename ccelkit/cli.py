@@ -34,6 +34,7 @@ def main():
 
     parser_make_system = subparsers.add_parser('make_system', help='make packmol system')
     parser_make_system.add_argument("-c","--config",type=str,default=None,help="config file path")
+    parser_make_system.add_argument("--preset", action='store_true', help="use preset configuration")
 
     make_system_subparsers = parser_make_system.add_subparsers(dest="make_system_command", help="Make system commands")
     make_system_subparsers.add_parser("init_dir", help="initialize directory")
@@ -48,7 +49,7 @@ def main():
             visual(args=args)
     elif args.command == 'make_system':
         if hasattr(args, 'make_system_command') and args.make_system_command == 'init_dir':
-            init_dir()
+            init_dir(preset=args.preset)
         elif hasattr(args, 'make_system_command') and args.make_system_command == 'init_config':
             init_config()
         else:
