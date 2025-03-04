@@ -205,6 +205,7 @@ def write_liquid_gas_packmol_inp(pliquids:List[PLiquid], pgases:List[PGas])->Non
 
 def set_preset(src_dir: str) -> None:
     # (1) cell_POSCAR 파일 작성
+    print("\033[94mSetting cell...\033[0m (Orthogonal cell only!)")
     x_max = float(input("Enter x_max: "))
     y_max = float(input("Enter y_max: "))
     z_max = float(input("Enter z_max: "))
@@ -219,6 +220,7 @@ def set_preset(src_dir: str) -> None:
     liquid_dir = os.path.join(src_dir, 'liquid')
     os.makedirs(liquid_dir, exist_ok=True)
     
+    print("\033[94mSetting liquid molecules...\033[0m")
     while True:
         molecule_name = input("Enter molecule name (or 't' to terminate): ")
         if molecule_name == 't':
@@ -229,14 +231,15 @@ def set_preset(src_dir: str) -> None:
             write(xyz_path, mol, format='xyz')
         else:
             print("Available molecules:", g2.names)
-            print(f"The molecule '{molecule_name}' is not in the list.")
+            print(f"\033[91mThe molecule '{molecule_name}' is not in the list.\033[0m")
 
     # (3) gas 디렉토리에 반복
     gas_dir = os.path.join(src_dir, 'gas')
     os.makedirs(gas_dir, exist_ok=True)
     
+    print("\033[94mSetting gas molecules...\033[0m")
     while True:
-        molecule_name = input("Enter gas molecule name (or 't' to terminate): ")
+        molecule_name = input("Enter molecule name (or 't' to terminate): ")
         if molecule_name == 't':
             break
         if molecule_name in g2.names:
@@ -245,7 +248,7 @@ def set_preset(src_dir: str) -> None:
             write(xyz_path, mol, format='xyz')
         else:
             print("Available molecules:", g2.names)
-            print(f"The molecule '{molecule_name}' is not in the list.")
+            print(f"\033[91mThe molecule '{molecule_name}' is not in the list.\033[0m")
 
 
             

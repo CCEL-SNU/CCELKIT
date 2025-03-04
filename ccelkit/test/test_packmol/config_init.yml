@@ -1,19 +1,23 @@
-cell_path: /home/pn50212/ccelkit/ccelkit/test/test_packmol/src/cell.npy
-gas_dir: /home/pn50212/ccelkit/ccelkit/test/test_packmol/src/gas
+cell_path: /home/pn50212/ccelkit/ccelkit/test/test_packmol/src/cell_POSCAR
 gas:
     H2S:
         density: 0.01
+gas_dir: /home/pn50212/ccelkit/ccelkit/test/test_packmol/src/gas
 liquid:
+    CF4:
+        density: 0.1
+    CH4:
+        density: 0.1
     H2:
-        density: 0.2
+        density: 0.1
 liquid_dir: /home/pn50212/ccelkit/ccelkit/test/test_packmol/src/liquid
 out_dir: /home/pn50212/ccelkit/ccelkit/test/test_packmol/out
-population: 5
+population: 3
 root_dir: /home/pn50212/ccelkit/ccelkit/test/test_packmol
 seed: 42
 solid:
     Mo_42_hole: null
 solid_dir: /home/pn50212/ccelkit/ccelkit/test/test_packmol/src/solid
+solid_fluid_tolerance: 3.0
 src_dir: /home/pn50212/ccelkit/ccelkit/test/test_packmol/src
 tolerance: 2.0
-solid_fluid_tolerance: 3.0
