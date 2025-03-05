@@ -1,14 +1,10 @@
 cell_path: /home/pn50212/ccelkit/ccelkit/test/test_packmol/src/cell_POSCAR
-gas:
-    C2H6CHOH:
-        density: 0.3
-    Cl2:
+fluid:
+    Li2:
         density: 0.2
-    cyclobutene:
+    PF3:
         density: 0.2
-gas_dir: /home/pn50212/ccelkit/ccelkit/test/test_packmol/src/gas
-liquid: {}
-liquid_dir: /home/pn50212/ccelkit/ccelkit/test/test_packmol/src/liquid
+fluid_dir: /home/pn50212/ccelkit/ccelkit/test/test_packmol/src/fluid
 out_dir: /home/pn50212/ccelkit/ccelkit/test/test_packmol/out
 population: 5
 root_dir: /home/pn50212/ccelkit/ccelkit/test/test_packmol

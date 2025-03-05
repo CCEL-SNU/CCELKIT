@@ -51,8 +51,8 @@ def read_psolid(pobj_path:str)->PSolid:
         
     return pobj
 
-def read_pliquid(pobj_path:str)->PLiquid:
-    ptype = 'liquid'
+def read_pfluid(pobj_path:str)->PFluid:
+    ptype = 'fluid'
     format = get_file_format(pobj_path)
     atoms = read(pobj_path,format=format)
     name = get_filename(pobj_path)
@@ -60,7 +60,7 @@ def read_pliquid(pobj_path:str)->PLiquid:
     xyz_atoms_path = os.path.join("/".join(pobj_path.split('/')[:-1]), f'pinp_{name}.xyz')
     write(xyz_atoms_path, atoms, format='xyz')
 
-    pobj = PLiquid(xyz_atoms_path, atoms, name, ptype)
+    pobj = PFluid(xyz_atoms_path, atoms, name, ptype)
 
     molar_mass = pobj.atoms.get_masses().sum()
     molar_length = len(pobj.atoms)
@@ -69,26 +69,6 @@ def read_pliquid(pobj_path:str)->PLiquid:
     pobj.set_surrounding_info()
     
     return pobj
-
-def read_pgas(pobj_path:str)->PLiquid:
-    ptype = 'gas'
-    format = get_file_format(pobj_path)
-    atoms = read(pobj_path,format=format)
-    name = get_filename(pobj_path)
-
-    xyz_atoms_path = os.path.join("/".join(pobj_path.split('/')[:-1]), f'pinp_{name}.xyz')
-    write(xyz_atoms_path, atoms, format='xyz')
-
-    pobj = PGas(xyz_atoms_path, atoms, name, ptype)
-
-    molar_mass = pobj.atoms.get_masses().sum()
-    molar_length = len(pobj.atoms)
-
-    pobj.set_system_info({"molar_mass": molar_mass, "molar_length": molar_length})
-    pobj.set_surrounding_info()
-    
-    return pobj
-
 
 def read_pcell(cell_path:str)->PCell:
 
@@ -106,10 +86,8 @@ def read_pcell(cell_path:str)->PCell:
 def read_pobj(pobj_path:str, ptype:str)->PObj:
     if ptype == 'solid':
         return read_psolid(pobj_path)
-    elif ptype == 'liquid':
-        return read_pliquid(pobj_path)
-    elif ptype == 'gas':
-        return read_pgas(pobj_path)
+    elif ptype == 'fluid':
+        return read_pfluid(pobj_path)
     elif ptype == 'cell':
         return read_pcell(pobj_path)
     else:
@@ -148,23 +126,13 @@ def density_to_number(density:float, molar_mass:float, molar_atom_number:float, 
     return int(number)
 
 
-def read_liquid_src(src_dir:str)->List[PLiquid]:
+def read_fluid_src(src_dir:str)->List[PFluid]:
     pobjs = []
-    liquid_dir = os.path.join(src_dir, 'liquid')
-    for file in os.listdir(liquid_dir):
+    fluid_dir = os.path.join(src_dir, 'fluid')
+    for file in os.listdir(fluid_dir):
         if file.startswith('pinp_'):
             continue
-        pobj = read_pliquid(os.path.join(liquid_dir, file))
-        pobjs.append(pobj)
-    return pobjs
-
-def read_gas_src(src_dir:str)->List[PGas]:
-    pobjs = []
-    gas_dir = os.path.join(src_dir, 'gas')
-    for file in os.listdir(gas_dir):
-        if file.startswith('pinp_'):
-            continue
-        pobj = read_pgas(os.path.join(gas_dir, file))
+        pobj = read_pfluid(os.path.join(fluid_dir, file))
         pobjs.append(pobj)
     return pobjs
 
@@ -179,16 +147,14 @@ def read_solid_src(src_dir:str)->List[PSolid]:
     return pobjs
 
 def read_src(src_dir:str)->Dict[str, List[PObj]]:
-    pobjs = {"cell":None, "liquid":[], "gas":[], "solid":[]}
+    pobjs = {"cell":None, "fluid":[], "solid":[]}
     pcell = read_pcell(os.path.join(src_dir, 'cell_POSCAR'))
 
-    pliquids = read_liquid_src(src_dir)
-    pgases = read_gas_src(src_dir)
+    pliquids = read_fluid_src(src_dir)
     psolids = read_solid_src(src_dir)
 
     pobjs["cell"] = pcell
-    pobjs["liquid"] = pliquids
-    pobjs["gas"] = pgases
+    pobjs["fluid"] = pliquids
     pobjs["solid"] = psolids
     return pobjs
 
@@ -196,9 +162,9 @@ def write_packmol_header(tolerance:float, seed:int)->str:
     header = f"tolerance {tolerance:.1f}\nfiletype xyz\nseed {seed}\n\n"
     return header
 
-def write_liquid_gas_packmol_inp(pliquids:List[PLiquid], pgases:List[PGas])->None:
+def write_fluid_packmol_inp(pfluids:List[PFluid])->None:
     packmol_str = ""
-    for pobj in pliquids + pgases:
+    for pobj in pfluids:
         packmol_str += pobj.to_packmol_str()
     return packmol_str
 
@@ -222,37 +188,19 @@ def set_preset(src_dir: str) -> None:
         if not os.path.exists(os.path.join(src_dir, 'cell_POSCAR')):
             raise FileNotFoundError("cell_POSCAR file not found. Please set the cell first.")
 
-    # (2) liquid 디렉토리에 molecule.xyz 작성
-    liquid_dir = os.path.join(src_dir, 'liquid')
-    os.makedirs(liquid_dir, exist_ok=True)
+    # (2) fluid 디렉토리에 molecule.xyz 작성
+    fluid_dir = os.path.join(src_dir, 'fluid')
+    os.makedirs(fluid_dir, exist_ok=True)
     
-    print("\033[94mSetting liquid molecules...\033[0m")
+    print("\033[94mSetting fluid molecules...\033[0m")
     while True:
         molecule_name = input("Enter molecule name (or 't' to terminate): ")
         if molecule_name == 't':
             break
         if molecule_name in g2.names:
             mol = molecule(molecule_name, vacuum=20)
-            xyz_path = os.path.join(liquid_dir, f"{molecule_name}.xyz")
+            xyz_path = os.path.join(fluid_dir, f"{molecule_name}.xyz")
             write(xyz_path, mol, format='xyz')
         else:
             print("Available molecules:", g2.names)
             print(f"\033[91mThe molecule '{molecule_name}' is not in the list.\033[0m")
-
-    # (3) gas 디렉토리에 반복
-    gas_dir = os.path.join(src_dir, 'gas')
-    os.makedirs(gas_dir, exist_ok=True)
-    
-    print("\033[94mSetting gas molecules...\033[0m")
-    while True:
-        molecule_name = input("Enter molecule name (or 't' to terminate): ")
-        if molecule_name == 't':
-            break
-        if molecule_name in g2.names:
-            mol = molecule(molecule_name, vacuum=20)
-            xyz_path = os.path.join(gas_dir, f"{molecule_name}.xyz")
-            write(xyz_path, mol, format='xyz')
-        else:
-            print("Available molecules:", g2.names)
-            print(f"\033[91mThe molecule '{molecule_name}' is not in the list.\033[0m")
-

@@ -12,19 +12,17 @@ def init_dir(root_dir=os.getcwd())->None:
     os.makedirs(root_dir, exist_ok=True)
     src_dir = os.path.join(root_dir, 'src')
     solid_dir = os.path.join(src_dir, 'solid')
-    liquid_dir = os.path.join(src_dir, 'liquid')
-    gas_dir = os.path.join(src_dir, 'gas')
+    fluid_dir = os.path.join(src_dir, 'fluid')
     os.makedirs(src_dir, exist_ok=True)
     os.makedirs(solid_dir, exist_ok=True)
-    os.makedirs(liquid_dir, exist_ok=True)
-    os.makedirs(gas_dir, exist_ok=True)
+    os.makedirs(fluid_dir, exist_ok=True)
 
     cell_path = os.path.join(src_dir, 'cell_POSCAR')
     if not os.path.exists(cell_path):
         cell_atoms = Atoms(cell=Cell([[50,0,0],[0,50,0],[0,0,50]]), pbc=True, symbols=['H'], positions=[[0,0,0]])
         write(cell_path, cell_atoms)
 
-    return root_dir, src_dir, solid_dir, liquid_dir, gas_dir, cell_path
+    return root_dir, src_dir, solid_dir, fluid_dir, cell_path
 
 def init_config(root_dir:str = os.getcwd(), preset:str = False)->None:
     root_dir = os.path.abspath(root_dir)
@@ -38,12 +36,9 @@ def init_config(root_dir:str = os.getcwd(), preset:str = False)->None:
     solid_dir = os.path.join(src_dir, 'solid')
     solid_filenames = [get_filename(os.path.join(solid_dir, file)) for file in os.listdir(solid_dir) if not file.startswith('pinp_')]
     solid_dict = {filename: None for filename in solid_filenames}
-    liquid_dir = os.path.join(src_dir, 'liquid')
-    liquid_filenames = [get_filename(os.path.join(liquid_dir, file)) for file in os.listdir(liquid_dir) if not file.startswith('pinp_')]
-    liquid_dict = {filename: {"density": None} for filename in liquid_filenames}
-    gas_dir = os.path.join(src_dir, 'gas')
-    gas_filenames = [get_filename(os.path.join(gas_dir, file)) for file in os.listdir(gas_dir) if not file.startswith('pinp_')]
-    gas_dict = {filename: {"density": None} for filename in gas_filenames}
+    fluid_dir = os.path.join(src_dir, 'fluid')
+    fluid_filenames = [get_filename(os.path.join(fluid_dir, file)) for file in os.listdir(fluid_dir) if not file.startswith('pinp_')]
+    fluid_dict = {filename: {"density": None} for filename in fluid_filenames}
 
     config = {
         "root_dir": root_dir,
@@ -52,10 +47,8 @@ def init_config(root_dir:str = os.getcwd(), preset:str = False)->None:
         "cell_path": cell_path,
         "solid_dir": solid_dir,
         "solid" : solid_dict,
-        "liquid_dir": liquid_dir,
-        "liquid": liquid_dict,
-        "gas_dir": gas_dir,
-        "gas": gas_dict,
+        "fluid_dir": fluid_dir,
+        "fluid": fluid_dict,
         "tolerance": 2.0,
         "seed": 42,
         "population": 5,
@@ -83,8 +76,7 @@ def make_system(config_path:str)->None:
 
     pobjs = read_src(src_dir)
     pcell = pobjs["cell"]
-    pliquids = pobjs["liquid"]
-    pgases = pobjs["gas"]
+    pfluids = pobjs["fluid"]
     psolids = pobjs["solid"] # not used
 
     cell = pcell.info['system']['cell']
@@ -105,7 +97,7 @@ def make_system(config_path:str)->None:
     
     for system_idx in tqdm(range(config['population']), desc='시스템 생성 중'):
         c = 0
-        for pobj in pliquids + pgases:
+        for pobj in pfluids:
             pobj.set_system_info(box_info)
             density = config[pobj.type][pobj.name]['density']
             num_atoms = density_to_number(density, pobj.info['system']['molar_mass'], pobj.info['system']['molar_length'], cell_volume)
@@ -115,51 +107,51 @@ def make_system(config_path:str)->None:
                 c += pobj.info['system']['molar_length']
             pobj.set_system_info({"num_molecules": num_atoms, "mol_indices": mol_indices})
 
-        # make liquid and gas packmol input
-        liquid_gas_packmol_inp = os.path.join(out_dir, f'liquid_gas_packmol_{system_idx:02d}.inp')
-        liquid_gas_packmol_xyz = os.path.join(out_dir, f'liquid_gas_packmol_{system_idx:02d}.xyz')
-        with open(liquid_gas_packmol_inp, 'w') as f:
+        # make fluid packmol input
+        fluid_packmol_inp = os.path.join(out_dir, f'fluid_packmol_{system_idx:02d}.inp')
+        fluid_packmol_xyz = os.path.join(out_dir, f'fluid_packmol_{system_idx:02d}.xyz')
+        with open(fluid_packmol_inp, 'w') as f:
             f.write(write_packmol_header(tolerance, seed + system_idx))
-            f.write(f"output {liquid_gas_packmol_xyz}\n\n")
-            f.write(write_liquid_gas_packmol_inp(pliquids, pgases))
+            f.write(f"output {fluid_packmol_xyz}\n\n")
+            f.write(write_fluid_packmol_inp(pfluids))
 
-        print(f"Packmol 실행 중: {liquid_gas_packmol_inp}")
-        result = subprocess.run(f"{packmol_path} < {liquid_gas_packmol_inp}", shell=True, timeout=30)
+        print(f"Packmol 실행 중: {fluid_packmol_inp}")
+        result = subprocess.run(f"{packmol_path} < {fluid_packmol_inp}", shell=True, timeout=30)
 
-        liquid_gas_xyz = read(liquid_gas_packmol_xyz, format='xyz')
-        liquid_gas_xyz.cell = cell
-        liquid_gas_xyz.pbc = True
-        liquid_gas_non_duplicate = None
+        fluid_xyz = read(fluid_packmol_xyz, format='xyz')
+        fluid_xyz.cell = cell
+        fluid_xyz.pbc = True
+        fluid_non_duplicate = None
         new_mol_indices = []
         c = 0
-        for pobj in pliquids + pgases:
+        for pobj in pfluids:
             a = 0
             num_mol = len(pobj.info['system']['mol_indices'])
             new_mol_indices = []
             for i in range(num_mol):
                 mol_indices = pobj.info['system']['mol_indices'][i]
-                mol_atoms = liquid_gas_xyz[mol_indices]
-                if liquid_gas_non_duplicate is None:
-                    liquid_gas_non_duplicate = mol_atoms
-                    liquid_gas_non_duplicate.cell = cell
-                    liquid_gas_non_duplicate.pbc = True
+                mol_atoms = fluid_xyz[mol_indices]
+                if fluid_non_duplicate is None:
+                    fluid_non_duplicate = mol_atoms
+                    fluid_non_duplicate.cell = cell
+                    fluid_non_duplicate.pbc = True
                 else:
                     is_valid = True
-                    temp_atoms = liquid_gas_non_duplicate.copy() + mol_atoms.copy()
+                    temp_atoms = fluid_non_duplicate.copy() + mol_atoms.copy()
                     for t in range(len(mol_atoms)):
-                        d_array = temp_atoms.get_distances(a=len(liquid_gas_non_duplicate)+t,indices=list(range(len(liquid_gas_non_duplicate))), mic=True)
+                        d_array = temp_atoms.get_distances(a=len(fluid_non_duplicate)+t,indices=list(range(len(fluid_non_duplicate))), mic=True)
                         if (d_array.min() < config['tolerance']):
                             is_valid = False
                             break
                     if is_valid:
-                        liquid_gas_non_duplicate = temp_atoms
+                        fluid_non_duplicate = temp_atoms
                         new_mol_indices.append(list(range(c, c+len(mol_atoms))))
                         c += len(mol_atoms)
                         a += 1
             pobj.set_system_info({"num_atoms": a, "mol_indices": new_mol_indices})
         
-        liquid_gas_non_duplicate_POSCAR_path = os.path.join(out_dir, f'liquid_gas_non_duplicate_{system_idx:02d}_POSCAR')
-        liquid_gas_non_duplicate.write(liquid_gas_non_duplicate_POSCAR_path)
+        fluid_non_duplicate_POSCAR_path = os.path.join(out_dir, f'fluid_non_duplicate_{system_idx:02d}_POSCAR')
+        fluid_non_duplicate.write(fluid_non_duplicate_POSCAR_path)
 
         solid_POSCAR = Atoms(cell=cell, pbc=True)
         for psolid in psolids:
@@ -168,7 +160,7 @@ def make_system(config_path:str)->None:
 
         solid_POSCAR.write(os.path.join(out_dir, 'solid.xyz'), format='xyz')
 
-        liquid_gas_non_duplicate = read(liquid_gas_non_duplicate_POSCAR_path)
+        fluid_non_duplicate = read(fluid_non_duplicate_POSCAR_path)
         solid_xyz = read(os.path.join(out_dir, 'solid.xyz'), format='xyz')
         solid_length = len(solid_xyz)
 
@@ -180,13 +172,13 @@ def make_system(config_path:str)->None:
         system_temp = system_atoms.copy()
 
         c = len(system_atoms)
-        for pobj in pliquids + pgases:
+        for pobj in pfluids:
             num_mol = len(pobj.info['system']['mol_indices'])
             a = 0
             new_mol_indices = []
             for i in range(num_mol):
                 mol_indices = pobj.info['system']['mol_indices'][i]
-                mol_atoms = liquid_gas_non_duplicate[mol_indices]
+                mol_atoms = fluid_non_duplicate[mol_indices]
                 system_atoms_copied = system_temp.copy()    
                 system_atoms_copied += mol_atoms
 

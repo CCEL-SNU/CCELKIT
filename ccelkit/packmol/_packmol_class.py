@@ -64,7 +64,7 @@ class PSolid(PObj):
     def get_info(self)->dict:
         return self.info
 
-class PLiquid(PObj):
+class PFluid(PObj):
     def __init__(self,path:str, atoms:Atoms, name:str, type:str):
         super().__init__(path,atoms,name,type)
 
@@ -87,31 +87,6 @@ end structure
         '''
         return self.packmol_str
 
-    def get_info(self)->dict:
-        return self.info
-
-class PGas(PObj):
-    def __init__(self,path:str, atoms:Atoms, name:str, type:str):
-        super().__init__(path,atoms,name,type)
-
-    def set_system_info(self,system_info:dict=None)->None:
-        if system_info is None:
-            system_info = {}
-        self.info['system'].update(system_info)
-
-    def set_surrounding_info(self,surrounding_info:dict=None)->None:
-        if surrounding_info is None:
-            surrounding_info = {}
-        self.info['surrounding'].update(surrounding_info)
-
-    def to_packmol_str(self)->str:
-        self.packmol_str = f'''
-structure {self.path}
-    number {self.info['system']['num_molecules']}
-    inside box {self.info['system']['x_min']} {self.info['system']['y_min']} {self.info['system']['z_min']} {self.info['system']['x_max']} {self.info['system']['y_max']} {self.info['system']['z_max']}
-end structure
-        '''
-        return self.packmol_str
     def get_info(self)->dict:
         return self.info
 

@@ -12,7 +12,7 @@ def test_init_dir():
     init_dir()
 
 def test_init_config():
-    init_config()
+    init_config(preset=True)
 
 def test_make_system(config_path:str):
     make_system(config_path)
