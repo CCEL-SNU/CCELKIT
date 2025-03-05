@@ -93,14 +93,14 @@ ccelkit make_system -c {config 파일 경로로}
 ### 1. 준비물
 - MoS2 with graphene nanohole 시스템 POSCAR 파일
 
-![packmol_logo](./images/image_02_top.png)
-![packmol_logo](./images/image_03_sidex.png)
+![02](./images/image_02_top.png)
+![03](./images/image_03_sidex.png)
 
 
 ### 2. ccelkit make_system init_dir 명령어 실행
 - 기본적인 src 폴더의 형식을 생성합니다.
 
-![packmol_logo](./images/image_04.png)
+![04](./images/image_04.png)
 
 ### 3. src 폴더 채우기
 - solid 폴더으로 준비한 "MoS2 with graphene nanohole 시스템 POSCAR 파일" 을 옮깁니다.
@@ -108,14 +108,14 @@ ccelkit make_system -c {config 파일 경로로}
 - 전체 cell의 lattice와 유체 분자들은 ccelkit make_system init_config --preset 명령어로 생성합니다.
 
 
-![packmol_logo](./images/image_05.png)
+![05](./images/image_05.png)
 
 ### 4. config 파일 채우기.
 - ccelkit make_system init_config 명령어의 결과로 config_init.yml 파일이 생성됩니다. 이 파일을 수정하여 전체 system 의 설정을 확정합니다.
 
-![packmol_logo](./images/image_06.png)
+![06](./images/image_06.png)
 
 ### 5. 전체 시스템 생성하기.
 - ccelkit make_system -c config_init.yml 명령어로 전체 시스템을 해당 설정 파일의 설정을 따라 생성합니다.
 
-![packmol_logo](./images/image_07.png)
+![07](./images/image_07.png)
