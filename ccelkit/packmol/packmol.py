@@ -92,7 +92,7 @@ def make_system(config_path:str)->None:
     cell_volume = cell_array[0][0] * cell_array[1][1] * cell_array[2][2]
 
     x_min, y_min, z_min = 0, 0, 0
-    x_max, y_max, z_max = x_min + cell_array[0][0] - tolerance, y_min + cell_array[1][1] - tolerance, z_min + cell_array[2][2] - tolerance # for pbc condition
+    x_max, y_max, z_max = x_min + cell_array[0][0], y_min + cell_array[1][1], z_min + cell_array[2][2]
 
     box_info = {
         "x_min": x_min,
@@ -126,6 +126,40 @@ def make_system(config_path:str)->None:
         print(f"Packmol 실행 중: {liquid_gas_packmol_inp}")
         result = subprocess.run(f"{packmol_path} < {liquid_gas_packmol_inp}", shell=True, timeout=30)
 
+        liquid_gas_xyz = read(liquid_gas_packmol_xyz, format='xyz')
+        liquid_gas_xyz.cell = cell
+        liquid_gas_xyz.pbc = True
+        liquid_gas_non_duplicate = None
+        new_mol_indices = []
+        c = 0
+        for pobj in pliquids + pgases:
+            a = 0
+            num_mol = len(pobj.info['system']['mol_indices'])
+            new_mol_indices = []
+            for i in range(num_mol):
+                mol_indices = pobj.info['system']['mol_indices'][i]
+                mol_atoms = liquid_gas_xyz[mol_indices]
+                if liquid_gas_non_duplicate is None:
+                    liquid_gas_non_duplicate = mol_atoms
+                    liquid_gas_non_duplicate.cell = cell
+                    liquid_gas_non_duplicate.pbc = True
+                else:
+                    is_valid = True
+                    temp_atoms = liquid_gas_non_duplicate.copy() + mol_atoms.copy()
+                    for t in range(len(mol_atoms)):
+                        d_array = temp_atoms.get_distances(a=len(liquid_gas_non_duplicate)+t,indices=list(range(len(liquid_gas_non_duplicate))), mic=True)
+                        if (d_array.min() < config['tolerance']):
+                            is_valid = False
+                            break
+                    if is_valid:
+                        liquid_gas_non_duplicate = temp_atoms
+                        new_mol_indices.append(list(range(c, c+len(mol_atoms))))
+                        c += len(mol_atoms)
+                        a += 1
+            pobj.set_system_info({"num_atoms": a, "mol_indices": new_mol_indices})
+        
+        liquid_gas_non_duplicate_POSCAR_path = os.path.join(out_dir, f'liquid_gas_non_duplicate_{system_idx:02d}_POSCAR')
+        liquid_gas_non_duplicate.write(liquid_gas_non_duplicate_POSCAR_path)
 
         solid_POSCAR = Atoms(cell=cell, pbc=True)
         for psolid in psolids:
@@ -134,7 +168,7 @@ def make_system(config_path:str)->None:
 
         solid_POSCAR.write(os.path.join(out_dir, 'solid.xyz'), format='xyz')
 
-        liquid_gas_xyz = read(liquid_gas_packmol_xyz, format='xyz')
+        liquid_gas_non_duplicate = read(liquid_gas_non_duplicate_POSCAR_path)
         solid_xyz = read(os.path.join(out_dir, 'solid.xyz'), format='xyz')
         solid_length = len(solid_xyz)
 
@@ -152,7 +186,7 @@ def make_system(config_path:str)->None:
             new_mol_indices = []
             for i in range(num_mol):
                 mol_indices = pobj.info['system']['mol_indices'][i]
-                mol_atoms = liquid_gas_xyz[mol_indices]
+                mol_atoms = liquid_gas_non_duplicate[mol_indices]
                 system_atoms_copied = system_temp.copy()    
                 system_atoms_copied += mol_atoms
 

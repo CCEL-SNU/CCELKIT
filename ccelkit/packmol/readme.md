@@ -25,22 +25,45 @@ root_dir/
 │ ├── gas/
 │ └── cell_POSCAR
 
-### 2. 설정 파일 초기화
+### 2. 시스템 설정 방법
+
+#### 2.1 수동 설정
+각 디렉토리에 필요한 분자 구조 파일을 직접 배치합니다:
+- `src/solid/`: 고체 상태 분자 구조 파일 (POSCAR, xyz, cif, pdb 형식)
+- `src/liquid/`: 액체 상태 분자 구조 파일
+- `src/gas/`: 기체 상태 분자 구조 파일
+- `cell_POSCAR`: 시스템 전체 cell 정보
+
+#### 2.2 Preset 기능 사용
+빠른 시스템 설정을 위해 preset 기능을 사용할 수 있습니다:
+
+```bash
+ccelkit make_system preset
+```
+
+Preset 기능은 다음 단계들을 대화형으로 안내합니다:
+1. Cell 설정
+   - cell 크기(x, y, z)를 직접 입력하거나 스킵 가능
+   - 스킵 시 기존 cell_POSCAR 파일이 필요
+2. 액체 분자 설정
+   - ASE의 g2 collection에서 제공하는 분자들 중 선택
+   - 't'를 입력하여 종료
+3. 기체 분자 설정
+   - ASE의 g2 collection에서 제공하는 분자들 중 선택
+   - 't'를 입력하여 종료
+
+### 3. 설정 파일 초기화
 
 bash
+'''
 ccelkit make_system init_config
+'''
 
 `config_init.yml` 파일이 생성됩니다. 이 파일에서 다음 설정들을 수정할 수 있습니다:
 - 각 분자의 밀도
 - tolerance: 분자 간 최소 거리
 - seed: 난수 생성 시드
 - population: 생성할 시스템의 수
-
-### 3. 분자 구조 파일 준비
-- `src/solid/`: 고체 상태 분자 구조 파일 (POSCAR, xyz, cif, pdb 형식)
-- `src/liquid/`: 액체 상태 분자 구조 파일
-- `src/gas/`: 기체 상태 분자 구조 파일
-- `cell_POSCAR`: 시스템 전체 cell 정보. system lattice 만이 해당 POSCAR 에서 사용됩니다. 
 
 ### 4. 시스템 생성
 
@@ -53,6 +76,7 @@ ccelkit make_system -c config.yml
 1. cell_POSCAR의 벡터는 반드시 직교해야 합니다.
 2. 분자 구조 파일의 이름은 `_POSCAR` 또는 확장자를 제외한 부분이 config 파일의 키값으로 사용됩니다.
 3. 생성된 시스템은 `out` 디렉토리에 저장됩니다.
+4. preset 기능 사용 시 ASE의 g2 collection에 있는 분자만 선택 가능합니다.
 
 ## 출력 파일
 

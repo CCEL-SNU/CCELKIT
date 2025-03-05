@@ -3,7 +3,7 @@ import ase, os
 from ase.io import read, write
 from ase import Atoms
 from ._packmol_class import *
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Callable
 import subprocess
 from ase.cell import Cell
 from ase.build import molecule
@@ -206,15 +206,21 @@ def write_liquid_gas_packmol_inp(pliquids:List[PLiquid], pgases:List[PGas])->Non
 def set_preset(src_dir: str) -> None:
     # (1) cell_POSCAR 파일 작성
     print("\033[94mSetting cell...\033[0m (Orthogonal cell only!)")
-    x_max = float(input("Enter x_max: "))
-    y_max = float(input("Enter y_max: "))
-    z_max = float(input("Enter z_max: "))
-    
-    # Create lattice and add a hydrogen atom at the center
-    lattice = np.array([[x_max, 0, 0], [0, y_max, 0], [0, 0, z_max]])
-    atoms = Atoms('H', positions=[[x_max/2, y_max/2, z_max/2]], cell=lattice,pbc=True)
-    poscar_path = os.path.join(src_dir, 'cell_POSCAR')
-    write(poscar_path, atoms)
+    skip_cell = input("Skip cell setting? (y/n): ").lower().strip()
+    if skip_cell != 'y':
+        x_max = float(input("Enter x_max: "))
+        y_max = float(input("Enter y_max: "))
+        z_max = float(input("Enter z_max: "))
+        
+        # Create lattice and add a hydrogen atom at the center
+        lattice = np.array([[x_max, 0, 0], [0, y_max, 0], [0, 0, z_max]])
+        atoms = Atoms('H', positions=[[x_max/2, y_max/2, z_max/2]], cell=lattice,pbc=True)
+        poscar_path = os.path.join(src_dir, 'cell_POSCAR')
+        write(poscar_path, atoms)
+    else:
+        print("\033[93mSkipping cell setting...\033[0m")
+        if not os.path.exists(os.path.join(src_dir, 'cell_POSCAR')):
+            raise FileNotFoundError("cell_POSCAR file not found. Please set the cell first.")
 
     # (2) liquid 디렉토리에 molecule.xyz 작성
     liquid_dir = os.path.join(src_dir, 'liquid')
@@ -250,9 +256,3 @@ def set_preset(src_dir: str) -> None:
             print("Available molecules:", g2.names)
             print(f"\033[91mThe molecule '{molecule_name}' is not in the list.\033[0m")
 
-
-            
-
-
-
-    

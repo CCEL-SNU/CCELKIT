@@ -5,13 +5,18 @@ seed 45
 output /home/pn50212/ccelkit/ccelkit/test/test_packmol/out/liquid_gas_packmol_03.xyz
 
 
-structure /home/pn50212/ccelkit/ccelkit/test/test_packmol/src/liquid/pinp_H2.xyz
-    number 7465
-    inside box 0 0 0 48.0 48.0 48.0
+structure /home/pn50212/ccelkit/ccelkit/test/test_packmol/src/gas/pinp_cyclobutene.xyz
+    number 100
+    inside box 0 0 0 30.0 30.0 50.0
 end structure
         
-structure /home/pn50212/ccelkit/ccelkit/test/test_packmol/src/gas/pinp_H2S.xyz
-    number 22
-    inside box 0 0 0 48.0 48.0 48.0
+structure /home/pn50212/ccelkit/ccelkit/test/test_packmol/src/gas/pinp_C2H6CHOH.xyz
+    number 135
+    inside box 0 0 0 30.0 30.0 50.0
+end structure
+        
+structure /home/pn50212/ccelkit/ccelkit/test/test_packmol/src/gas/pinp_Cl2.xyz
+    number 76
+    inside box 0 0 0 30.0 30.0 50.0
 end structure
         
