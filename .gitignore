@@ -1,0 +1,12 @@
+# Ignore POSCAR and xyz files
+*_POSCAR
+*.xyz
+
+# Ignore pycache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Ignore system specific files
+.DS_Store
+.vscode/
