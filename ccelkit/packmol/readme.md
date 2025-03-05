@@ -38,7 +38,7 @@ root_dir/
 빠른 시스템 설정을 위해 preset 기능을 사용할 수 있습니다:
 
 ```bash
-ccelkit make_system preset
+ccelkit make_system init_config --preset
 ```
 
 Preset 기능은 다음 단계들을 대화형으로 안내합니다:
