@@ -8,6 +8,8 @@ from scipy.spatial.transform import Rotation as R
 from .povray import visual
 from .povray._povray_utils import *
 
+from .packmol import make_system, init_dir, init_config
+
 def main():
     parser = ArgumentParser(description="Function commands")
     subparsers = parser.add_subparsers(dest="command", help="Available commands")
@@ -31,6 +33,14 @@ def main():
     visual_subparsers = parser_visual.add_subparsers(dest="visual_command", help="Visual commands")
     visual_subparsers.add_parser("create_config", help="create default config file")
 
+    parser_make_system = subparsers.add_parser('make_system', help='make packmol system')
+    parser_make_system.add_argument("-c","--config",type=str,default=None,help="config file path")
+    
+    make_system_subparsers = parser_make_system.add_subparsers(dest="make_system_command", help="Make system commands")
+    make_system_subparsers.add_parser("init_dir", help="initialize directory")
+    init_config_parser = make_system_subparsers.add_parser("init_config", help="initialize config")
+    init_config_parser.add_argument("--preset", action='store_true', help="use preset configuration")
+
     args = parser.parse_args()
 
     if args.command == 'visual':
@@ -38,6 +48,14 @@ def main():
             create_config()
         else:
             visual(args=args)
+    elif args.command == 'make_system':
+        if hasattr(args, 'make_system_command') and args.make_system_command == 'init_dir':
+            init_dir()
+        elif hasattr(args, 'make_system_command') and args.make_system_command == 'init_config':
+            init_config(preset=args.preset)
+        else:
+            make_system(args.config)
+
     else:
         parser.print_help()
 
