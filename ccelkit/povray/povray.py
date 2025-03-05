@@ -116,6 +116,7 @@ def visual(args):
         color_species = config['color_species']
         color_index = config['color_index']
         frame_per_second = config['frame_per_second']
+        postfix = config['postfix']
     else:
         target: str = args.target
         config: str = args.config
@@ -130,6 +131,7 @@ def visual(args):
         color_species: Dict[str,List[float]] = args.color_species
         color_index: Dict[str,List[float]] = args.color_index
         frame_per_second: int = args.frame_per_second
+        postfix: str = args.postfix
 
     files_to_be_processed = []
     files_to_be_saved = []
@@ -146,7 +148,7 @@ def visual(args):
                         file_name, _ = os.path.splitext(file)
                     else:
                         file_name = file
-                    new_file_name = set_postfix(file_name)
+                    new_file_name = set_postfix(file_name + postfix)
                     new_file_path = os.path.abspath(os.path.join(root, new_file_name))
                     files_to_be_saved.append(new_file_path)
     else:

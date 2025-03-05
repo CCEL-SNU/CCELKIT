@@ -44,7 +44,8 @@ def create_config():
             # 2: [1.000, 0.051, 0.051],
             # 3: [0.0, 0.0, 1.0]
         },
-        "frame_per_second": 24
+        "frame_per_second": 24,
+        "postfix": ""
     }
     
     # YAML 파일로 저장

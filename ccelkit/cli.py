@@ -26,6 +26,7 @@ def main():
     parser_visual.add_argument("-cs","--color_species",type=dict,default=None,help="color of the atoms by species")
     parser_visual.add_argument("-ci","--color_index",type=dict,default=None,help="color of the atoms by index")
     parser_visual.add_argument("-fps","--frame_per_second",type=int,default=24,help="frame per second")
+    parser_visual.add_argument("--postfix", type=str, default="", help="Postfix for output files")
     
     visual_subparsers = parser_visual.add_subparsers(dest="visual_command", help="Visual commands")
     visual_subparsers.add_parser("create_config", help="create default config file")
