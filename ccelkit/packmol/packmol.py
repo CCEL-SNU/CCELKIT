@@ -98,6 +98,7 @@ def make_system(config_path:str)->None:
     for system_idx in tqdm(range(config['population']), desc='시스템 생성 중'):
         c = 0
         for pobj in pfluids:
+            pobj.set_system_info({"tolerance": tolerance})
             pobj.set_system_info(box_info)
             density = config[pobj.type][pobj.name]['density']
             num_atoms = density_to_number(density, pobj.info['system']['molar_mass'], pobj.info['system']['molar_length'], cell_volume)

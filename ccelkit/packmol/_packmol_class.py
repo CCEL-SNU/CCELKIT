@@ -79,10 +79,11 @@ class PFluid(PObj):
         self.info['surrounding'].update(surrounding_info)
 
     def to_packmol_str(self)->str:
+        offset = self.info['system']['tolerance'] / 2
         self.packmol_str = f'''
 structure {self.path}
     number {self.info['system']['num_molecules']}
-    inside box {self.info['system']['x_min']} {self.info['system']['y_min']} {self.info['system']['z_min']} {self.info['system']['x_max']} {self.info['system']['y_max']} {self.info['system']['z_max']}
+    inside box {self.info['system']['x_min'] + offset} {self.info['system']['y_min'] + offset} {self.info['system']['z_min'] + offset} {self.info['system']['x_max'] - offset} {self.info['system']['y_max'] - offset} {self.info['system']['z_max'] - offset}
 end structure
         '''
         return self.packmol_str
