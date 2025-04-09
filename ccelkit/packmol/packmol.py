@@ -188,7 +188,7 @@ def make_system(config_path:str)->None:
                 system_atoms_copied += mol_atoms
 
                 is_valid = True
-                if len(solid_atoms) > 0:
+                if solid_length > 0:
                     for t in range(len(mol_atoms)):
                         d_array = system_atoms_copied.get_distances(a=solid_length+t,indices=list(range(solid_length)), mic=True)
                         if (d_array.min() < config['solid_fluid_tolerance']):
