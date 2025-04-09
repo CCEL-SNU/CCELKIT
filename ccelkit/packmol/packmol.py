@@ -38,7 +38,7 @@ def init_config(root_dir:str = os.getcwd(), preset:str = False)->None:
     solid_dict = {filename: None for filename in solid_filenames}
     fluid_dir = os.path.join(src_dir, 'fluid')
     fluid_filenames = [get_filename(os.path.join(fluid_dir, file)) for file in os.listdir(fluid_dir) if not file.startswith('pinp_')]
-    fluid_dict = {filename: {"density": None} for filename in fluid_filenames}
+    fluid_dict = {filename: {"type": "density", "value": None} for filename in fluid_filenames}
 
     config = {
         "root_dir": root_dir,
@@ -100,8 +100,12 @@ def make_system(config_path:str)->None:
         for pobj in pfluids:
             pobj.set_system_info({"tolerance": tolerance})
             pobj.set_system_info(box_info)
-            density = config[pobj.type][pobj.name]['density']
-            num_atoms = density_to_number(density, pobj.info['system']['molar_mass'], pobj.info['system']['molar_length'], cell_volume)
+            v_type = config[pobj.type][pobj.name]['type']
+            v_value = config[pobj.type][pobj.name]['value']
+            if v_type == "density":
+                num_atoms = density_to_number(v_value, pobj.info['system']['molar_mass'], pobj.info['system']['molar_length'], cell_volume)
+            elif v_type == "number":
+                num_atoms = v_value
             mol_indices = []
             for i in range(num_atoms):
                 mol_indices.append(list(range(c, c+pobj.info['system']['molar_length'])))
