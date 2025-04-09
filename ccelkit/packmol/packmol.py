@@ -181,7 +181,6 @@ def make_system(config_path:str)->None:
 
         c = len(system_atoms)
         for pobj in pfluids:
-            print("before", pobj.info['system'])
             num_mol = len(pobj.info['system']['mol_indices'])
             a = 0
             new_mol_indices = []
@@ -205,11 +204,9 @@ def make_system(config_path:str)->None:
                 if is_valid:
                     new_mol_indices.append(list(range(c, c+len(mol_atoms))))
                     system_atoms += mol_atoms
-                    print(len(system_atoms), i, mol_atoms)
                     c += len(mol_atoms)
                     a += 1
             
             pobj.set_system_info({"num_atoms": a, "mol_indices": new_mol_indices})
-            print("after", pobj.info['system'])
         system_POSCAR_path = os.path.join(out_dir, f'system_{system_idx:02d}_POSCAR')
         write(system_POSCAR_path, system_atoms)
