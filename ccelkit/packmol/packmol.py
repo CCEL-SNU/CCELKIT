@@ -188,6 +188,7 @@ def make_system(config_path:str)->None:
                 system_atoms_copied = system_temp.copy()    
                 system_atoms_copied += mol_atoms
 
+
                 is_valid = True
                 if solid_length > 0:
                     for t in range(len(mol_atoms)):
@@ -201,6 +202,7 @@ def make_system(config_path:str)->None:
                 if is_valid:
                     new_mol_indices.append(list(range(c, c+len(mol_atoms))))
                     system_atoms += mol_atoms
+                    print(len(system_atoms), i, mol_atoms)
                     c += len(mol_atoms)
                     a += 1
             
