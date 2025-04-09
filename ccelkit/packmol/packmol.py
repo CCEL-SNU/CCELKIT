@@ -204,5 +204,6 @@ def make_system(config_path:str)->None:
                     a += 1
             
             pobj.set_system_info({"num_atoms": a, "mol_indices": new_mol_indices})
+            print(pobj.info['system'])
         system_POSCAR_path = os.path.join(out_dir, f'system_{system_idx:02d}_POSCAR')
         write(system_POSCAR_path, system_atoms)
