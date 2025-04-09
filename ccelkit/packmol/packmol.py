@@ -140,6 +140,9 @@ def make_system(config_path:str)->None:
                     fluid_non_duplicate = mol_atoms
                     fluid_non_duplicate.cell = cell
                     fluid_non_duplicate.pbc = True
+                    new_mol_indices.append(list(range(c, c+len(mol_atoms))))
+                    c += len(mol_atoms)
+                    a += 1
                 else:
                     is_valid = True
                     temp_atoms = fluid_non_duplicate.copy() + mol_atoms.copy()
