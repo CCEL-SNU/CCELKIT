@@ -188,11 +188,14 @@ def make_system(config_path:str)->None:
                 system_atoms_copied += mol_atoms
 
                 is_valid = True
-                for t in range(len(mol_atoms)):
-                    d_array = system_atoms_copied.get_distances(a=solid_length+t,indices=list(range(solid_length)), mic=True)
-                    if (d_array.min() < config['solid_fluid_tolerance']):
-                        is_valid = False
-                        break
+                if len(solid_atoms) > 0:
+                    for t in range(len(mol_atoms)):
+                        d_array = system_atoms_copied.get_distances(a=solid_length+t,indices=list(range(solid_length)), mic=True)
+                        if (d_array.min() < config['solid_fluid_tolerance']):
+                            is_valid = False
+                            break
+                else:
+                    is_valid = True
 
                 if is_valid:
                     new_mol_indices.append(list(range(c, c+len(mol_atoms))))
